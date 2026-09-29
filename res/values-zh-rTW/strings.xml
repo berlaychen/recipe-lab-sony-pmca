@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Traditional Chinese display text. Canonical recipe/storage identifiers remain unchanged. -->
+    <string name="browser_brand">品牌</string>
+    <string name="favourites">我的最愛</string>
+    <string name="favourites_empty">尚無我的最愛</string>
+    <string name="favourites_hint">在配方上長按中央鍵，即可加入我的最愛</string>
+    <string name="favourite_added">已將 %1$s 加入我的最愛</string>
+    <string name="favourite_removed">已將 %1$s 從我的最愛移除</string>
+    <string name="accept">套用</string>
+    <string name="cancel">取消</string>
+    <string name="reset">重設</string>
+    <string name="reset_title">要還原原廠設定嗎？</string>
+    <string name="reset_body">將目前風格改為標準 0 / 0 / 0、自動白平衡，並關閉效果</string>
+    <string name="not_reset">未重設</string>
+    <string name="not_picked">未套用</string>
+    <string name="already_picked">已套用，無須寫入</string>
+    <string name="recipe_previewed">正在預覽 %1$s，按中央鍵套用</string>
+    <string name="status_preview">預覽中</string>
+    <string name="status_active">已套用</string>
+    <string name="mini_preview">預覽中</string>
+    <string name="mini_active">已套用</string>
+    <string name="mini_line">%1$s  %2$s   %3$d / %4$d   · %5$s</string>
+    <string name="off">關閉</string>
+    <string name="on">開啟</string>
+    <string name="auto">自動</string>
+    <string name="kelvin">色溫</string>
+    <string name="unknown">未知</string>
+    <string name="wb_mode">模式 %1$d</string>
+    <string name="dro_level">等級 %1$d</string>
+    <string name="effect_note">相片效果 %1$s（不套用創意風格，僅限 JPEG）</string>
+    <string name="wb_note">白平衡 %1$s</string>
+    <string name="ev_note">EV %1$s</string>
+    <string name="dro_note">DRO %1$s</string>
+    <string name="quality_change_note">畫質 → %1$s（目前 %2$s）</string>
+    <string name="mini_quality_note">畫質 → %1$s</string>
+    <string name="raw_effect_ignored">已啟用 RAW：不套用相片效果</string>
+    <string name="preview_failed">無法即時預覽：%1$s</string>
+    <string name="read_failed">讀取失敗：%1$s</string>
+    <string name="quality_title">畫質：%1$s → %2$s</string>
+    <string name="quality_effect_body">此配方需要 JPEG 格式才能套用。</string>
+    <string name="quality_style_body">創意風格配方沿用原廠配方目前的畫質設定。</string>
+    <string name="quality_live_only">尚未找到畫質設定位置，僅供即時預覽</string>
+    <string name="quality_pick">畫質：%1$s，按中央鍵套用</string>
+    <string name="quality_preview_only">畫質：%1$s（尚未找到設定位置，僅供預覽）</string>
+    <string name="keys_notice">長按 MENU 開啟選單；按刪除鍵切換面板；長按刪除鍵重設</string>
+    <string name="app_menu_title">RECIPE LAB</string>
+    <string name="dev_menu_title">開發工具</string>
+    <string name="about_title">關於</string>
+    <string name="menu_browse">瀏覽配方</string>
+    <string name="menu_panel">面板顯示</string>
+    <string name="menu_reset">重設設定</string>
+    <string name="menu_about">關於</string>
+    <string name="menu_developer">開發工具 &gt;</string>
+    <string name="detail_browse">品牌與我的最愛</string>
+    <string name="detail_panel">調整即時預覽上的面板，按左／右鍵切換</string>
+    <string name="detail_reset">還原相機的原廠風格</string>
+    <string name="detail_about">版本、相機與平台</string>
+    <string name="detail_developer">設定快照、唯讀檢查、範例拍攝與按鍵記錄</string>
+    <string name="panel_full">完整</string>
+    <string name="panel_label">標籤</string>
+    <string name="panel_hidden">隱藏</string>
+    <string name="about_version">版本</string>
+    <string name="about_camera">相機</string>
+    <string name="about_platform">平台</string>
+    <string name="about_source">原始碼</string>
+    <string name="settings_diff">設定差異</string>
+    <string name="settings_snapshot">設定快照</string>
+    <string name="read_only_check">唯讀檢查：%1$d 個設定位置</string>
+    <string name="shoot_samples">範例拍攝：%1$d 個配方</string>
+    <string name="settle_delay">穩定等待時間</string>
+    <string name="key_logger">按鍵記錄</string>
+    <string name="detail_diff">將每個設定位置與快照比對</string>
+    <string name="detail_snapshot">記錄每個設定位置目前的值</string>
+    <string name="detail_read_only">檢查配方使用的設定位置是否為唯讀</string>
+    <string name="detail_samples">依序為每個配方拍攝一張 JPEG，按 MENU 停止</string>
+    <string name="detail_settle">套用配方後等待，再釋放快門；按左／右鍵調整</string>
+    <string name="detail_keys">顯示按鍵掃描碼，長按 MENU 離開</string>
+    <string name="snapshot_taken">已記錄 %1$d 個設定。變更一項相機設定後，重新開啟並執行「設定差異」。</string>
+    <string name="settings_changed">%1$d 個設定有變更：%2$s</string>
+    <string name="snapshot_failed">快照失敗：%1$s</string>
+    <string name="no_preview">無法即時預覽，範例拍攝需要相機可用</string>
+    <string name="sample_progress">拍攝中 %1$d / %2$d：%3$s，按 MENU 停止</string>
+    <string name="sample_done">範例拍攝完成：已拍 %1$d / %2$d 張，清單位於 %3$s</string>
+    <string name="sample_stopped_empty">範例拍攝已停止，尚未拍攝任何照片</string>
+    <string name="sample_stopped">範例拍攝已停止：已拍 %1$d / %2$d 張，清單位於 %3$s</string>
+    <string name="sample_failed">第 %1$d 張快門失敗：%2$s；已拍 %3$d 張，清單位於 %4$s</string>
+    <string name="file_failed">%1$s 寫入失敗：%2$s</string>
+    <string name="logger_title">按鍵記錄：%1$s · %2$s</string>
+    <string name="logger_stopped">按鍵記錄已停止，事件位於 %1$s</string>
+    <string name="logger_keys">按鍵</string>
+    <plurals name="locked_message">
+        <item quantity="other">未寫入。以下設定為唯讀：%1$s。請先在 OpenMemories-Tweak 的 Protection → Unlock protected settings 解鎖，再套用配方。</item>
+    </plurals>
+    <plurals name="write_failed">
+        <item quantity="other">寫入 %1$s（%2$s）失敗：%3$s；停止前已寫入 %4$d 個位元組</item>
+    </plurals>
+    <string name="write_failed_empty">寫入 %1$s（%2$s）失敗：%3$s；尚未寫入任何資料</string>
+    <string name="locks_clear">已檢查 %1$d 個配方設定位置，均無唯讀標記</string>
+    <string name="locks_found">已檢查 %1$d 個配方設定位置，其中 %2$d 個為唯讀：%3$s</string>
+    <string name="locks_unreadable">%1$d 個位置無法讀取屬性</string>
+    <string name="sub_slot">子選項 %1$s</string>
+    <string name="hint_pick">套用</string>
+    <string name="hint_browse">瀏覽</string>
+    <string name="hint_favourite_hold">長按收藏</string>
+    <string name="hint_menu_hold">長按選單</string>
+    <string name="hint_hide">隱藏</string>
+    <string name="hint_exit">離開</string>
+    <string name="hint_edit">編輯</string>
+    <string name="hint_done">完成</string>
+    <string name="hint_recipes">配方</string>
+    <string name="hint_close">關閉</string>
+    <string name="hint_move">移動</string>
+    <string name="hint_select">選取</string>
+    <string name="hint_back">返回</string>
+    <string name="hint_change">調整</string>
+    <string name="hint_exit_hold">長按離開</string>
+    <string name="hint_confirm">確認</string>
+    <string name="hint_cancel">取消</string>
+    <string name="position_factory">原廠</string>
+    <string name="group_sony">Sony</string>
+    <string name="group_fuji_sim">富士模擬</string>
+    <string name="group_fuji_film">富士底片</string>
+    <string name="group_kodak">Kodak</string>
+    <string name="group_cine">電影</string>
+    <string name="group_ricoh_gr">理光 GR</string>
+    <string name="group_leica">Leica</string>
+    <string name="group_hasselblad">Hasselblad</string>
+    <string name="group_canon_nikon">Canon / Nikon</string>
+    <string name="group_pana_olympus">Pana / Olympus</string>
+    <string name="group_other_stocks">其他底片</string>
+    <string name="group_ilford">Ilford</string>
+
+    <!-- Recipe display names can be localized independently from brand/group names. -->
+    <string name="recipe_gr_positive_film">GR 正片</string>
+    <string name="recipe_gr_negative_film">GR 負片</string>
+    <string name="recipe_gr_bleach_bypass">GR 留銀沖洗</string>
+    <string name="recipe_gr_retro">GR 懷舊</string>
+    <string name="recipe_gr_cross_process">GR 正負逆沖</string>
+    <string name="recipe_gr_hi_contrast_b_and_w">GR 高對比黑白</string>
+    <string name="recipe_gr_hard_monotone">GR 硬單色</string>
+    <string name="recipe_gr_soft_monotone">GR 柔和單色</string>
+    <plurals name="picked_values">
+        <item quantity="one">已套用並寫入 %1$d 個設定，請重新開機以全面生效</item>
+        <item quantity="other">已套用並寫入 %1$d 個設定，請重新開機以全面生效</item>
+    </plurals>
+    <string-array name="ui_row_labels">
+        <item>配方</item>
+        <item>風格</item>
+        <item>飽和度</item>
+        <item>對比度</item>
+        <item>銳利度</item>
+        <item>PP</item>
+        <item>效果</item>
+        <item>子選項</item>
+        <item>白平衡</item>
+        <item>色溫</item>
+        <item>A-B</item>
+        <item>G-M</item>
+        <item>EV</item>
+        <item>DRO</item>
+        <item>畫質</item>
+    </string-array>
+    <string-array name="ui_style_labels">
+        <item>\?</item>
+        <item>標準</item>
+        <item>鮮豔</item>
+        <item>中性</item>
+        <item>人像</item>
+        <item>風景</item>
+        <item>黑白</item>
+        <item>清晰</item>
+        <item>深色</item>
+        <item>淡色</item>
+        <item>夕陽</item>
+        <item>夜景</item>
+        <item>秋葉</item>
+        <item>\?</item>
+        <item>復古棕</item>
+    </string-array>
+    <string-array name="ui_effect_labels">
+        <item>關閉</item>
+        <item>玩具相機</item>
+        <item>普普色彩</item>
+        <item>色調分離</item>
+        <item>復古</item>
+        <item>柔焦亮調</item>
+        <item>部分色彩</item>
+        <item>高對比黑白</item>
+        <item>柔焦</item>
+        <item>HDR 繪畫</item>
+        <item>豐富色調黑白</item>
+        <item>微縮景觀</item>
+        <item>插畫</item>
+        <item>水彩</item>
+    </string-array>
+    <string-array name="ui_quality_labels">
+        <item>RAW</item>
+        <item>RAW+JPG</item>
+        <item>JPG 精細</item>
+        <item>JPG 標準</item>
+    </string-array>
+    <string-array name="ui_highkey_labels">
+        <item>藍</item>
+        <item>粉紅</item>
+        <item>綠</item>
+    </string-array>
+    <string-array name="ui_toy_labels">
+        <item>正常</item>
+        <item>冷色</item>
+        <item>暖色</item>
+        <item>綠</item>
+        <item>洋紅</item>
+    </string-array>
+    <string-array name="ui_partial_labels">
+        <item>紅</item>
+        <item>綠</item>
+        <item>藍</item>
+        <item>黃</item>
+    </string-array>
+    <string-array name="ui_poster_labels">
+        <item>彩色</item>
+        <item>黑白</item>
+    </string-array>
+</resources>
