@@ -119,23 +119,63 @@ final class Keys {
     static final int H_RECIPE = 0, H_CHIPS = 1, H_EDIT = 2, H_BRANDS = 3, H_RECIPES = 4, H_MENU_TOP = 5, H_MENU_SUB = 6,
             H_PAGE = 7, H_LOGGER = 8, H_MENU_TOP_VALUE = 9, H_MENU_SUB_VALUE = 10;
 
-    /** one legend row: per item an icon, an optional shortcut icon drawn before it (I_NONE for none), and a label */
+    /** Stable semantic ids for legend text. Localized words belong in the UI layer. */
+    static final int HINT_PICK = 0;
+    static final int HINT_BROWSE = 1;
+    static final int HINT_FAVOURITE_HOLD = 2;
+    static final int HINT_MENU_HOLD = 3;
+    static final int HINT_HIDE = 4;
+    static final int HINT_EXIT = 5;
+    static final int HINT_EDIT = 6;
+    static final int HINT_DONE = 7;
+    static final int HINT_RECIPES = 8;
+    static final int HINT_CLOSE = 9;
+    static final int HINT_MOVE = 10;
+    static final int HINT_SELECT = 11;
+    static final int HINT_BACK = 12;
+    static final int HINT_CHANGE = 13;
+    static final int HINT_EXIT_HOLD = 14;
+    static final int HINT_CONFIRM = 15;
+    static final int HINT_CANCEL = 16;
+
+    /** one legend row: per item an icon, an optional shortcut icon, and a semantic action */
     static final class Hints {
-        final int[] icons, alts;
-        final String[] labels;
-        Hints(int[] icons, int[] alts, String[] labels) { this.icons = icons; this.alts = alts; this.labels = labels; }
+        final int[] icons;
+        final int[] alts;
+        final int[] actions;
+
+        Hints(int[] icons, int[] alts, int[] actions) {
+            this.icons = icons;
+            this.alts = alts;
+            this.actions = actions;
+        }
     }
 
     private static final class Row {
         final List<int[]> keys = new ArrayList<int[]>();
-        final List<String> labels = new ArrayList<String>();
-        Row add(int icon, String label) { return add(icon, I_NONE, label); }
-        Row add(int icon, int alt, String label) { keys.add(new int[] { icon, alt }); labels.add(label); return this; }
+        final List<Integer> actions = new ArrayList<Integer>();
+
+        Row add(int icon, int action) {
+            return add(icon, I_NONE, action);
+        }
+
+        Row add(int icon, int alt, int action) {
+            keys.add(new int[] {icon, alt});
+            actions.add(action);
+            return this;
+        }
+
         Hints done() {
-            int n = keys.size();
-            int[] icons = new int[n], alts = new int[n];
-            for (int i = 0; i < n; i++) { icons[i] = keys.get(i)[0]; alts[i] = keys.get(i)[1]; }
-            return new Hints(icons, alts, labels.toArray(new String[n]));
+            int size = keys.size();
+            int[] icons = new int[size];
+            int[] alts = new int[size];
+            int[] actionIds = new int[size];
+            for (int i = 0; i < size; i++) {
+                icons[i] = keys.get(i)[0];
+                alts[i] = keys.get(i)[1];
+                actionIds[i] = actions.get(i);
+            }
+            return new Hints(icons, alts, actionIds);
         }
     }
 
@@ -149,28 +189,72 @@ final class Keys {
         int fn = caps.hasFn() ? I_FN : I_NONE;
         switch (mode) {
             case H_RECIPE: {
-                Row r = new Row().add(I_ENTER, "pick");
-                if (caps.hasFn()) r.add(I_FN, "browse");
-                return r.add(I_ENTER, "fav (hold)").add(I_MENU, "menu (hold)").add(I_TRASH, "hide").add(I_MENU, "exit").done();
+                Row row = new Row().add(I_ENTER, HINT_PICK);
+                if (caps.hasFn()) {
+                    row.add(I_FN, HINT_BROWSE);
+                }
+                return row
+                        .add(I_ENTER, HINT_FAVOURITE_HOLD)
+                        .add(I_MENU, HINT_MENU_HOLD)
+                        .add(I_TRASH, HINT_HIDE)
+                        .add(I_MENU, HINT_EXIT)
+                        .done();
             }
             case H_CHIPS: {
-                Row r = new Row().add(I_ENTER, "edit");
-                if (caps.hasFn()) r.add(I_FN, "browse");
-                return r.add(I_MENU, "menu (hold)").add(I_TRASH, "hide").add(I_MENU, "exit").done();
+                Row row = new Row().add(I_ENTER, HINT_EDIT);
+                if (caps.hasFn()) {
+                    row.add(I_FN, HINT_BROWSE);
+                }
+                return row
+                        .add(I_MENU, HINT_MENU_HOLD)
+                        .add(I_TRASH, HINT_HIDE)
+                        .add(I_MENU, HINT_EXIT)
+                        .done();
             }
-            case H_EDIT: return new Row().add(I_ENTER, "done").done();
-            case H_BRANDS: return new Row().add(I_ENTER, "recipes").add(I_MENU, fn, "close").done();
-            case H_RECIPES: return new Row().add(I_ENTER, "pick").add(I_ENTER, "fav (hold)").add(I_MENU, fn, "close").done();
-            case H_MENU_TOP: return new Row().add(I_UPDOWN, "move").add(I_ENTER, "select").add(I_MENU, "close").done();
-            case H_MENU_SUB: return new Row().add(I_UPDOWN, "move").add(I_ENTER, "select").add(I_MENU, "back").done();
-            case H_MENU_TOP_VALUE: return new Row().add(I_UPDOWN, "move").add(I_LEFTRIGHT, "change").add(I_MENU, "close").done();
-            case H_MENU_SUB_VALUE: return new Row().add(I_UPDOWN, "move").add(I_LEFTRIGHT, "change").add(I_MENU, "back").done();
-            case H_PAGE: return new Row().add(I_MENU, "back").done();
-            case H_LOGGER: return new Row().add(I_MENU, "exit (hold)").done();
-            default: return new Row().done();
+            case H_EDIT:
+                return new Row().add(I_ENTER, HINT_DONE).done();
+            case H_BRANDS:
+                return new Row()
+                        .add(I_ENTER, HINT_RECIPES)
+                        .add(I_MENU, fn, HINT_CLOSE)
+                        .done();
+            case H_RECIPES:
+                return new Row()
+                        .add(I_ENTER, HINT_PICK)
+                        .add(I_ENTER, HINT_FAVOURITE_HOLD)
+                        .add(I_MENU, fn, HINT_CLOSE)
+                        .done();
+            case H_MENU_TOP:
+                return new Row()
+                        .add(I_UPDOWN, HINT_MOVE)
+                        .add(I_ENTER, HINT_SELECT)
+                        .add(I_MENU, HINT_CLOSE)
+                        .done();
+            case H_MENU_SUB:
+                return new Row()
+                        .add(I_UPDOWN, HINT_MOVE)
+                        .add(I_ENTER, HINT_SELECT)
+                        .add(I_MENU, HINT_BACK)
+                        .done();
+            case H_MENU_TOP_VALUE:
+                return new Row()
+                        .add(I_UPDOWN, HINT_MOVE)
+                        .add(I_LEFTRIGHT, HINT_CHANGE)
+                        .add(I_MENU, HINT_CLOSE)
+                        .done();
+            case H_MENU_SUB_VALUE:
+                return new Row()
+                        .add(I_UPDOWN, HINT_MOVE)
+                        .add(I_LEFTRIGHT, HINT_CHANGE)
+                        .add(I_MENU, HINT_BACK)
+                        .done();
+            case H_PAGE:
+                return new Row().add(I_MENU, HINT_BACK).done();
+            case H_LOGGER:
+                return new Row().add(I_MENU, HINT_EXIT_HOLD).done();
+            default:
+                return new Row().done();
         }
     }
 
-    /** shown once, on the first launch of a build with these keys */
-    static final String NOTICE = "Hold MENU for the menu  ·  trash hides the panel  ·  hold trash to reset";
 }

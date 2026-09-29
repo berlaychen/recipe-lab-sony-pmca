@@ -15,7 +15,8 @@ public class HintBar extends View {
 
     public HintBar(Context c, AttributeSet a) {
         super(c, a);
-        legend = new Legend(c.getResources().getDisplayMetrics().density);
+        UiText ui = new UiText(c);
+        legend = new Legend(c.getResources().getDisplayMetrics().density, ui);
     }
 
     public void setMode(int m) { if (mode != m) { mode = m; invalidate(); } }

@@ -14,12 +14,12 @@ import java.util.List;
 public class PromptView extends View {
     private static final int ACCENT = 0xFFF2B85C, INK = 0xFF1A1208;
     private static final int[] LEGEND_ICONS = { Legend.ENTER, Legend.MENU };
-    private static final String[] LEGEND_TEXT = { "confirm", "cancel" };
 
     private final Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG), edge = new Paint(Paint.ANTI_ALIAS_FLAG), title = new Paint(Paint.ANTI_ALIAS_FLAG),
             body = new Paint(Paint.ANTI_ALIAS_FLAG), opt = new Paint(Paint.ANTI_ALIAS_FLAG), pill = new Paint(Paint.ANTI_ALIAS_FLAG), note = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF r = new RectF();
     private final Legend legend;
+    private final UiText ui;
     private final float d;
     private String titleText = "", bodyText = "", noteText = null;
     private String[] options = new String[0];
@@ -28,8 +28,9 @@ public class PromptView extends View {
 
     public PromptView(Context c, AttributeSet a) {
         super(c, a);
+        ui = new UiText(c);
         d = c.getResources().getDisplayMetrics().density;
-        legend = new Legend(d);
+        legend = new Legend(d, ui);
         bg.setColor(0xF0141414);
         edge.setColor(0x88F2B85C); edge.setStyle(Paint.Style.STROKE); edge.setStrokeWidth(d);
         title.setColor(0xFFFFFFFF); title.setTextSize(15 * d); title.setFakeBoldText(true);
@@ -52,23 +53,11 @@ public class PromptView extends View {
         float wd = Math.max(title.measureText(titleText), body.measureText(bodyText)) + 2 * pad;
         float ow = 0; for (String o : options) ow += opt.measureText(o) + 36 * d;
         wd = Math.min(Math.max(wd, ow + 20 * d), max);
-        wrap(titleText, title, wd - 2 * pad, titleLines);
-        wrap(bodyText, body, wd - 2 * pad, bodyLines);
+        UiCanvas.wrap(titleText, title, wd - 2 * pad, titleLines);
+        UiCanvas.wrap(bodyText, body, wd - 2 * pad, bodyLines);
         float h = 14 * d + titleLines.size() * titleStep() + bodyLines.size() * bodyStep() + 12 * d + 30 * d + 14 * d
                 + (noteText != null ? 14 * d : 0) + legend.height() + 12 * d;
         setMeasuredDimension((int) wd, (int) h);
-    }
-
-    /** breaks {@code text} into lines no wider than {@code width} at spaces; a single word wider than that keeps its line */
-    private static void wrap(String text, Paint p, float width, List<String> out) {
-        out.clear();
-        String line = "";
-        for (String word : text.split(" ")) {
-            if (word.isEmpty()) continue;
-            String next = line.isEmpty() ? word : line + " " + word;
-            if (!line.isEmpty() && p.measureText(next) > width) { out.add(line); line = word; } else line = next;
-        }
-        if (!line.isEmpty() || out.isEmpty()) out.add(line);
     }
 
     @Override
@@ -98,8 +87,8 @@ public class PromptView extends View {
         if (noteText != null) {
             float ns = 10 * d, avail = w - 2 * pad;
             while (note.measureText(noteText) > avail && ns > 7 * d) { ns -= 0.5f * d; note.setTextSize(ns); }
-            c.drawText(noteText, pad, y, note); note.setTextSize(10 * d); y += 14 * d;
+            c.drawText(UiCanvas.fit(noteText, note, avail), pad, y, note); note.setTextSize(10 * d); y += 14 * d;
         }
-        legend.draw(c, pad, y + legend.height() / 2 - 2 * d, w - 2 * pad, LEGEND_ICONS, LEGEND_TEXT);
+        legend.draw(c, pad, y + legend.height() / 2 - 2 * d, w - 2 * pad, LEGEND_ICONS, new int[] { Keys.HINT_CONFIRM, Keys.HINT_CANCEL });
     }
 }

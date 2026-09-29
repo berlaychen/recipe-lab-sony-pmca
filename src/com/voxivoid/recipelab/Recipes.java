@@ -52,7 +52,7 @@ public class Recipes {
     /** Picture Effect: stored byte = index in the runtime list (verified) */
     public static final String[] PE_KEYS = { "off", "toy-camera", "pop-color", "posterization", "retro-photo", "soft-high-key", "part-color", "rough-mono", "soft-focus", "hdr-art", "richtone-mono", "miniature", "illust", "watercolor" };
     public static final String[] PE_LABEL = { "off", "Toy", "Pop", "Poster", "Retro", "High-key", "Part col", "HC mono", "Soft foc", "HDR art", "Rich mono", "Miniature", "Illust", "Watercol" };
-    public static final int PE_OFF = 0, PE_TOY = 1, PE_POP = 2, PE_RETRO = 4, PE_HIGHKEY = 5, PE_HCMONO = 7;
+    public static final int PE_OFF = 0, PE_TOY = 1, PE_POP = 2, PE_POSTER = 3, PE_RETRO = 4, PE_HIGHKEY = 5, PE_PARTIAL = 6, PE_HCMONO = 7;
     /** a style whose runtime name we know — the others are enum values seen in the store but never identified */
     public static boolean styleKnown(int v) { return v >= 1 && v < STYLE_NAMES.length && STYLE_NAMES[v] != null; }
     /** chip / HUD labels with a "?n" fallback for an unidentified or out-of-table stored value */

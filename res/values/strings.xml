@@ -1,4 +1,299 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Recipe Lab</string>
+    <!-- UI text only. Canonical recipe names and camera/storage identifiers remain in Java. -->
+    <string name="app_name" translatable="false">Recipe Lab</string>
+    <string name="browser_brand">BRAND</string>
+    <string name="favourites">Favourites</string>
+    <string name="favourites_empty">No favourites yet</string>
+    <string name="favourites_hint">Hold the centre button on a recipe to keep it here</string>
+    <string name="favourite_added">%1$s added to Favourites</string>
+    <string name="favourite_removed">%1$s removed from Favourites</string>
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset">Reset</string>
+    <string name="reset_title">Reset to factory settings\?</string>
+    <string name="reset_body">Stores Standard 0 / 0 / 0, auto white balance, no effect, in place of the current look</string>
+    <string name="not_reset">Not reset</string>
+    <string name="not_picked">Not picked</string>
+    <string name="already_picked">Already picked — nothing to write</string>
+    <string name="recipe_previewed">%1$s previewed — ENTER to pick</string>
+    <string name="status_preview">PREVIEW</string>
+    <string name="status_active">ACTIVE</string>
+    <string name="mini_preview">preview</string>
+    <string name="mini_active">active</string>
+    <string name="mini_line">%1$s  %2$s   %3$d / %4$d   · %5$s</string>
+    <string name="token_creative_style" translatable="false">CS</string>
+    <string name="token_picture_effect" translatable="false">PE</string>
+    <string name="off">off</string>
+    <string name="on">on</string>
+    <string name="auto">auto</string>
+    <string name="kelvin">kelvin</string>
+    <string name="unknown">unknown</string>
+    <string name="wb_mode">mode %1$d</string>
+    <string name="dro_level">Lv%1$d</string>
+    <string name="effect_note">Picture Effect %1$s (Creative Style ignored, JPEG only)</string>
+    <string name="wb_note">WB %1$s</string>
+    <string name="ev_note">EV %1$s</string>
+    <string name="dro_note">DRO %1$s</string>
+    <string name="quality_change_note">QUALITY → %1$s (now %2$s)</string>
+    <string name="mini_quality_note">quality → %1$s</string>
+    <string name="raw_effect_ignored">RAW is on: effect ignored</string>
+    <string name="preview_failed">no live preview: %1$s</string>
+    <string name="read_failed">Read failed: %1$s</string>
+    <string name="quality_title">Quality: %1$s → %2$s</string>
+    <string name="quality_effect_body">JPEG is needed to apply this recipe.</string>
+    <string name="quality_style_body">Creative Style recipes use the Factory recipe\'s quality.</string>
+    <string name="quality_live_only">quality slot not located yet — live view only</string>
+    <string name="quality_pick">Quality: %1$s — ENTER to pick</string>
+    <string name="quality_preview_only">Quality: %1$s (live view only until the slot is known)</string>
+    <string name="keys_notice">Hold MENU for the menu · trash hides the panel · hold trash to reset</string>
+    <string name="app_menu_title">RECIPE LAB</string>
+    <string name="dev_menu_title">DEV TOOLS</string>
+    <string name="about_title">ABOUT</string>
+    <string name="menu_browse">Browse recipes</string>
+    <string name="menu_panel">Panel visibility</string>
+    <string name="menu_reset">Reset settings</string>
+    <string name="menu_about">About</string>
+    <string name="menu_developer">Developer &gt;</string>
+    <string name="detail_browse">Brands and favourites</string>
+    <string name="detail_panel">What stays over the live image — left / right to change</string>
+    <string name="detail_reset">Back to the camera\'s factory look</string>
+    <string name="detail_about">Version, camera, platform</string>
+    <string name="detail_developer">Settings snapshot, read-only check, samples, key logger</string>
+    <string name="panel_full">Full</string>
+    <string name="panel_label">Label</string>
+    <string name="panel_hidden">Hidden</string>
+    <string name="about_version">version</string>
+    <string name="about_camera">camera</string>
+    <string name="about_platform">platform</string>
+    <string name="about_source">source</string>
+    <string name="settings_diff">Settings diff</string>
+    <string name="settings_snapshot">Settings snapshot</string>
+    <string name="read_only_check">Read-only check — %1$d slots</string>
+    <string name="shoot_samples">Shoot samples — %1$d recipes</string>
+    <string name="settle_delay">Settle delay</string>
+    <string name="key_logger">Key logger</string>
+    <string name="detail_diff">Compare every settings id against the snapshot</string>
+    <string name="detail_snapshot">Store the value of every settings id</string>
+    <string name="detail_read_only">Test every slot a recipe writes for the read-only flag</string>
+    <string name="detail_samples">One JPEG per recipe, in table order — MENU stops the run</string>
+    <string name="detail_settle">Wait after applying a recipe before the shutter fires — left / right to change</string>
+    <string name="detail_keys">Show every key\'s scan code — hold MENU to leave</string>
+    <string name="snapshot_taken">Snapshot of %1$d settings taken. Change a menu setting, reopen, run Settings diff.</string>
+    <string name="settings_changed">%1$d changed  %2$s</string>
+    <string name="snapshot_failed">snapshot error: %1$s</string>
+    <string name="no_preview">No live preview — the sample run needs the camera</string>
+    <string name="sample_progress">Shooting %1$d / %2$d · %3$s — MENU stops</string>
+    <string name="sample_done">Samples done — %1$d of %2$d frames shot, listed in %3$s</string>
+    <string name="sample_stopped_empty">Sample run stopped before the first frame</string>
+    <string name="sample_stopped">Sample run stopped — %1$d of %2$d frames shot, listed in %3$s</string>
+    <string name="sample_failed">Shutter failed on frame %1$d: %2$s — %3$d frames shot, listed in %4$s</string>
+    <string name="file_failed">%1$s failed: %2$s</string>
+    <string name="logger_title">KEY LOGGER · %1$s · %2$s</string>
+    <string name="logger_stopped">Key logger stopped — events are in %1$s</string>
+    <string name="logger_keys">keys</string>
+    <plurals name="locked_message">
+        <item quantity="one">Not written — the camera holds this setting read-only: %1$s. Unlock the settings store with OpenMemories-Tweak (Protection → Unlock protected settings), then pick the recipe again.</item>
+        <item quantity="other">Not written — the camera holds these settings read-only: %1$s. Unlock the settings store with OpenMemories-Tweak (Protection → Unlock protected settings), then pick the recipe again.</item>
+    </plurals>
+    <plurals name="write_failed">
+        <item quantity="one">WRITE FAILED on %1$s (%2$s): %3$s — %4$d byte written before it stopped</item>
+        <item quantity="other">WRITE FAILED on %1$s (%2$s): %3$s — %4$d bytes written before it stopped</item>
+    </plurals>
+    <string name="write_failed_empty">WRITE FAILED on %1$s (%2$s): %3$s — nothing was written</string>
+    <string name="locks_clear">%1$d recipe slots checked · none read-only</string>
+    <string name="locks_found">%1$d recipe slots checked · %2$d read-only: %3$s</string>
+    <string name="locks_unreadable">%1$d would not answer</string>
+    <string name="sub_slot">SUB %1$s</string>
+    <string name="hint_pick">pick</string>
+    <string name="hint_browse">browse</string>
+    <string name="hint_favourite_hold">fav (hold)</string>
+    <string name="hint_menu_hold">menu (hold)</string>
+    <string name="hint_hide">hide</string>
+    <string name="hint_exit">exit</string>
+    <string name="hint_edit">edit</string>
+    <string name="hint_done">done</string>
+    <string name="hint_recipes">recipes</string>
+    <string name="hint_close">close</string>
+    <string name="hint_move">move</string>
+    <string name="hint_select">select</string>
+    <string name="hint_back">back</string>
+    <string name="hint_change">change</string>
+    <string name="hint_exit_hold">exit (hold)</string>
+    <string name="hint_confirm">confirm</string>
+    <string name="hint_cancel">cancel</string>
+    <string name="position_factory">factory</string>
+    <!-- Localized display names. Persistence continues to use Recipes.Recipe.name. -->
+    <string name="group_sony">Sony</string>
+    <string name="group_fuji_sim">Fuji Sim</string>
+    <string name="group_fuji_film">Fuji Film</string>
+    <string name="group_kodak">Kodak</string>
+    <string name="group_cine">Cine</string>
+    <string name="group_ricoh_gr">Ricoh GR</string>
+    <string name="group_leica">Leica</string>
+    <string name="group_hasselblad">Hasselblad</string>
+    <string name="group_canon_nikon">Canon / Nikon</string>
+    <string name="group_pana_olympus">Pana / Olympus</string>
+    <string name="group_other_stocks">Other Stocks</string>
+    <string name="group_ilford">Ilford</string>
+
+    <string name="recipe_factory_st">FACTORY (ST)</string>
+    <string name="recipe_sony_pt_portrait">Sony PT (portrait)</string>
+    <string name="recipe_sony_nt_neutral">Sony NT (neutral)</string>
+    <string name="recipe_sony_vv_vivid">Sony VV (vivid)</string>
+    <string name="recipe_sony_vv2">Sony VV2</string>
+    <string name="recipe_sony_fl_film_like">Sony FL (film-like)</string>
+    <string name="recipe_sony_in_instant">Sony IN (instant)</string>
+    <string name="recipe_sony_sh_soft_high_key">Sony SH (soft high-key)</string>
+    <string name="recipe_provia">Provia</string>
+    <string name="recipe_velvia">Velvia</string>
+    <string name="recipe_astia">Astia</string>
+    <string name="recipe_classic_chrome">Classic Chrome</string>
+    <string name="recipe_classic_negative">Classic Negative</string>
+    <string name="recipe_nostalgic_neg">Nostalgic Neg</string>
+    <string name="recipe_reala_ace">Reala Ace</string>
+    <string name="recipe_pro_neg_std">Pro Neg Std</string>
+    <string name="recipe_pro_neg_hi">Pro Neg Hi</string>
+    <string name="recipe_eterna">Eterna</string>
+    <string name="recipe_eterna_bleach_bypass">Eterna Bleach Bypass</string>
+    <string name="recipe_acros">Acros</string>
+    <string name="recipe_acros_plus_ye_yellow_filter">Acros +Ye (yellow filter)</string>
+    <string name="recipe_acros_plus_r_red_filter">Acros +R (red filter)</string>
+    <string name="recipe_acros_plus_g_green_filter">Acros +G (green filter)</string>
+    <string name="recipe_sepia">Sepia</string>
+    <string name="recipe_fuji_pro_400h">Fuji Pro 400H</string>
+    <string name="recipe_fuji_fortia_50">Fuji Fortia 50</string>
+    <string name="recipe_fuji_superia_400">Fuji Superia 400</string>
+    <string name="recipe_fuji_c200">Fuji C200</string>
+    <string name="recipe_fuji_natura_1600">Fuji Natura 1600</string>
+    <string name="recipe_kodak_portra_160">Kodak Portra 160</string>
+    <string name="recipe_kodak_portra_400">Kodak Portra 400</string>
+    <string name="recipe_kodak_portra_800">Kodak Portra 800</string>
+    <string name="recipe_kodak_gold_200">Kodak Gold 200</string>
+    <string name="recipe_kodak_ultra_max_400">Kodak Ultra Max 400</string>
+    <string name="recipe_kodak_color_plus_200">Kodak Color Plus 200</string>
+    <string name="recipe_kodak_ektar_100">Kodak Ektar 100</string>
+    <string name="recipe_kodak_ektachrome_e100">Kodak Ektachrome E100</string>
+    <string name="recipe_kodachrome_64">Kodachrome 64</string>
+    <string name="recipe_kodak_vision3_500t_daylight">Kodak Vision3 500T (daylight)</string>
+    <string name="recipe_kodak_vision_200t_asteroid_city">Kodak Vision 200T (Asteroid City)</string>
+    <string name="recipe_kodak_tri_x_400">Kodak Tri-X 400</string>
+    <string name="recipe_kodak_t_max">Kodak T-Max</string>
+    <string name="recipe_kodak_tri_x_1600_pushed">Kodak Tri-X 1600 (pushed)</string>
+    <string name="recipe_cinestill_50d_blue_velvet">Cinestill 50D (Blue Velvet)</string>
+    <string name="recipe_cinestill_800t">Cinestill 800T</string>
+    <string name="recipe_classic_cinema">Classic Cinema</string>
+    <string name="recipe_rec709_video_flat_ish">Rec709 Video (flat-ish)</string>
+    <string name="recipe_gr_positive_film">GR Positive Film</string>
+    <string name="recipe_gr_negative_film">GR Negative Film</string>
+    <string name="recipe_gr_bleach_bypass">GR Bleach Bypass</string>
+    <string name="recipe_gr_retro">GR Retro</string>
+    <string name="recipe_gr_cross_process">GR Cross Process</string>
+    <string name="recipe_gr_hi_contrast_b_and_w">GR Hi-Contrast B&amp;W</string>
+    <string name="recipe_gr_hard_monotone">GR Hard Monotone</string>
+    <string name="recipe_gr_soft_monotone">GR Soft Monotone</string>
+    <string name="recipe_leica_contemporary">Leica Contemporary</string>
+    <string name="recipe_leica_classic">Leica Classic</string>
+    <string name="recipe_leica_eternal">Leica Eternal</string>
+    <string name="recipe_leica_monochrom">Leica Monochrom</string>
+    <string name="recipe_hasselblad_hncs_natural">Hasselblad HNCS Natural</string>
+    <string name="recipe_canon_standard">Canon Standard</string>
+    <string name="recipe_canon_portrait">Canon Portrait</string>
+    <string name="recipe_canon_faithful">Canon Faithful</string>
+    <string name="recipe_nikon_flat">Nikon Flat</string>
+    <string name="recipe_nikon_vivid">Nikon Vivid</string>
+    <string name="recipe_pana_l_monochrome_d">Pana L.Monochrome D</string>
+    <string name="recipe_pana_l_classicneo">Pana L.ClassicNeo</string>
+    <string name="recipe_olympus_pop_art">Olympus Pop Art</string>
+    <string name="recipe_olympus_pale_and_light">Olympus Pale &amp; Light</string>
+    <string name="recipe_agfa_vista_200">Agfa Vista 200</string>
+    <string name="recipe_agfa_ultra_100">Agfa Ultra 100</string>
+    <string name="recipe_polaroid_instax">Polaroid / Instax</string>
+    <string name="recipe_ilford_hp5">Ilford HP5</string>
+    <string name="recipe_ilford_fp4">Ilford FP4</string>
+    <string name="recipe_ilford_delta_100">Ilford Delta 100</string>
+    <string name="recipe_ilford_delta_3200">Ilford Delta 3200</string>
+    <string name="recipe_ilford_pan_f_50">Ilford Pan F 50</string>
+    <plurals name="picked_values">
+        <item quantity="one">Picked — %1$d value written, power-cycle the camera to apply everywhere</item>
+        <item quantity="other">Picked — %1$d values written, power-cycle the camera to apply everywhere</item>
+    </plurals>
+    <string-array name="ui_row_labels">
+        <item>RECIPE</item>
+        <item>STYLE</item>
+        <item>SAT</item>
+        <item>CON</item>
+        <item>SHARP</item>
+        <item>PP</item>
+        <item>EFFECT</item>
+        <item>SUB</item>
+        <item>WB</item>
+        <item>KELVIN</item>
+        <item>A-B</item>
+        <item>G-M</item>
+        <item>EV</item>
+        <item>DRO</item>
+        <item>QUALITY</item>
+    </string-array>
+    <string-array name="ui_style_labels">
+        <item>\?</item>
+        <item>Standard</item>
+        <item>Vivid</item>
+        <item>Neutral</item>
+        <item>Portrait</item>
+        <item>Landscape</item>
+        <item>B&amp;W</item>
+        <item>Clear</item>
+        <item>Deep</item>
+        <item>Light</item>
+        <item>Sunset</item>
+        <item>Night</item>
+        <item>Autumn</item>
+        <item>\?</item>
+        <item>Sepia</item>
+    </string-array>
+    <string-array name="ui_effect_labels">
+        <item>off</item>
+        <item>Toy</item>
+        <item>Pop</item>
+        <item>Poster</item>
+        <item>Retro</item>
+        <item>High-key</item>
+        <item>Part col</item>
+        <item>HC mono</item>
+        <item>Soft foc</item>
+        <item>HDR art</item>
+        <item>Rich mono</item>
+        <item>Miniature</item>
+        <item>Illust</item>
+        <item>Watercol</item>
+    </string-array>
+    <string-array name="ui_quality_labels">
+        <item>RAW</item>
+        <item>RAW+JPG</item>
+        <item>JPG Fine</item>
+        <item>JPG Std</item>
+    </string-array>
+    <string-array name="ui_highkey_labels">
+        <item>blue</item>
+        <item>pink</item>
+        <item>green</item>
+    </string-array>
+    <string-array name="ui_toy_labels">
+        <item>normal</item>
+        <item>cool</item>
+        <item>warm</item>
+        <item>green</item>
+        <item>magenta</item>
+    </string-array>
+    <string-array name="ui_partial_labels">
+        <item>red</item>
+        <item>green</item>
+        <item>blue</item>
+        <item>yellow</item>
+    </string-array>
+    <string-array name="ui_poster_labels">
+        <item>color</item>
+        <item>bw</item>
+    </string-array>
 </resources>

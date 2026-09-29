@@ -19,9 +19,14 @@ public class Legend {
     private final RectF rect = new RectF();
     private final Canvas nowhere = new Canvas();      // measuring pass draws into this
     private final float d;
+    private final UiText ui;
 
-    public Legend(float density) {
+    public Legend(float density, UiText ui) {
+        if (ui == null) {
+            throw new IllegalArgumentException("ui must not be null");
+        }
         d = density;
+        this.ui = ui;
         fill.setColor(0xCCFFFFFF); fill.setStyle(Paint.Style.FILL);
         stroke.setColor(0xCCFFFFFF); stroke.setStyle(Paint.Style.STROKE);
         text.setColor(0x99FFFFFF);
@@ -47,10 +52,28 @@ public class Legend {
     public float height() { return 16 * d; }
 
     /** draws a legend row built by {@link Keys#hints}: a shortcut icon, where there is one, goes before its key as "Fn / MENU" */
-    public float draw(Canvas c, float x, float cy, float width, Keys.Hints h) { return draw(c, x, cy, width, h.icons, h.alts, h.labels); }
+    public float draw(Canvas c, float x, float cy, float width, Keys.Hints hints) {
+        return draw(c, x, cy, width, hints.icons, hints.alts, localize(hints.actions));
+    }
 
-    /** draws icons+labels starting at x, vertically centred on cy, within width; returns the width actually used */
-    public float draw(Canvas c, float x, float cy, float width, int[] icons, String[] labels) { return draw(c, x, cy, width, icons, null, labels); }
+    /** draws explicit icons/actions, used by prompts that do not need a full Keys.Hints row */
+    public float draw(
+            Canvas c,
+            float x,
+            float cy,
+            float width,
+            int[] icons,
+            int[] actions) {
+        return draw(c, x, cy, width, icons, null, localize(actions));
+    }
+
+    private String[] localize(int[] actions) {
+        String[] labels = new String[actions.length];
+        for (int i = 0; i < actions.length; i++) {
+            labels[i] = ui.hint(actions[i]);
+        }
+        return labels;
+    }
 
     private float draw(Canvas c, float x, float cy, float width, int[] icons, int[] alts, String[] labels) {
         float scale = 1f, gap = 14 * d, minGap = 5 * d;

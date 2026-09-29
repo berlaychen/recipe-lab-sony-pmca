@@ -13,6 +13,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+./tools/test-i18n.sh
+
 JUNIT_VERSION=1.14.4
 JUNIT_SHA256=7c6968cbcaf4301c729f202b23b7d736c5d88be625fc7d27ad5d746146a8bc28
 JUNIT_URL="https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/$JUNIT_VERSION/junit-platform-console-standalone-$JUNIT_VERSION.jar"
@@ -31,6 +33,7 @@ UNITS=(
   src/com/voxivoid/recipelab/DevTools.java
   src/com/voxivoid/recipelab/Keys.java
   src/com/voxivoid/recipelab/KeyProbe.java
+  src/com/voxivoid/recipelab/TextFlow.java
 )
 
 mkdir -p out/test

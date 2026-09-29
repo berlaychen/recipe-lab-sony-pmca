@@ -67,10 +67,23 @@ class KeysTest {
     }
 
     // ---- the legend
-    private static List<Integer> iconsOf(Keys.Hints h) {
-        List<Integer> out = new ArrayList<Integer>();
-        for (int i = 0; i < h.icons.length; i++) { out.add(h.icons[i]); if (h.alts[i] != Keys.I_NONE) out.add(h.alts[i]); }
-        return out;
+    private static List<Integer> iconsOf(Keys.Hints hints) {
+        List<Integer> result = new ArrayList<Integer>();
+        for (int i = 0; i < hints.icons.length; i++) {
+            result.add(hints.icons[i]);
+            if (hints.alts[i] != Keys.I_NONE) {
+                result.add(hints.alts[i]);
+            }
+        }
+        return result;
+    }
+
+    private static List<Integer> actionsOf(Keys.Hints hints) {
+        List<Integer> result = new ArrayList<Integer>();
+        for (int action : hints.actions) {
+            result.add(action);
+        }
+        return result;
     }
 
     @Test void everyRowIsWellFormed() {
@@ -78,7 +91,7 @@ class KeysTest {
             for (int mode : EVERY_MODE) {
                 Keys.Hints h = Keys.hints(mode, caps);
                 assertEquals(h.icons.length, h.alts.length, "mode " + mode);
-                assertEquals(h.icons.length, h.labels.length, "mode " + mode);
+                assertEquals(h.icons.length, h.actions.length, "mode " + mode);
                 assertTrue(h.icons.length > 0, "mode " + mode);
                 for (int i = 0; i < h.icons.length; i++) assertNotEquals(Keys.I_NONE, h.icons[i], "mode " + mode + " item " + i);
             }
@@ -95,68 +108,56 @@ class KeysTest {
         for (int mode : new int[] { Keys.H_RECIPE, Keys.H_CHIPS }) {
             for (Keys.Caps caps : new Keys.Caps[] { NONE, FN }) {
                 Keys.Hints h = Keys.hints(mode, caps);
-                List<String> labels = Arrays.asList(h.labels);
-                for (String f : new String[] { "hide", "menu (hold)", "exit" }) assertTrue(labels.contains(f), mode + ": " + f);
-                assertEquals(Keys.I_TRASH, h.icons[labels.indexOf("hide")]);
-                assertEquals(Keys.I_NONE, h.alts[labels.indexOf("hide")], "trash alone hides: AEL is not bound");
-                assertEquals(Keys.I_MENU, h.icons[labels.indexOf("menu (hold)")]);
-                assertEquals("exit", h.labels[h.labels.length - 1], mode + ": exit sits at the right end");
+                List<Integer> labels = actionsOf(h);
+                for (int action : new int[] { Keys.HINT_HIDE, Keys.HINT_MENU_HOLD, Keys.HINT_EXIT }) assertTrue(labels.contains(action), mode + ": " + action);
+                assertEquals(Keys.I_TRASH, h.icons[labels.indexOf(Keys.HINT_HIDE)]);
+                assertEquals(Keys.I_NONE, h.alts[labels.indexOf(Keys.HINT_HIDE)], "trash alone hides: AEL is not bound");
+                assertEquals(Keys.I_MENU, h.icons[labels.indexOf(Keys.HINT_MENU_HOLD)]);
+                assertEquals(Keys.HINT_EXIT, h.actions[h.actions.length - 1], mode + ": exit sits at the right end");
                 assertEquals(Keys.I_MENU, h.icons[h.icons.length - 1]);
             }
         }
-        List<String> recipe = Arrays.asList(Keys.hints(Keys.H_RECIPE, NONE).labels);
-        assertTrue(recipe.contains("pick"));
-        assertTrue(recipe.contains("fav (hold)"));
-    }
-
-    @Test void theResetHoldIsNeverHinted() {
-        // it asks before it writes, and a hint would invite it; the app menu names it instead
-        for (Keys.Caps caps : new Keys.Caps[] { Keys.Caps.UNKNOWN, FN }) {
-            for (int mode : EVERY_MODE) {
-                for (String l : Keys.hints(mode, caps).labels) {
-                    assertFalse(l.contains("factory"), "mode " + mode + ": " + l);
-                    assertFalse(l.contains("reset"), "mode " + mode + ": " + l);
-                }
-            }
-        }
+        List<Integer> recipe = actionsOf(Keys.hints(Keys.H_RECIPE, NONE));
+        assertTrue(recipe.contains(Keys.HINT_PICK));
+        assertTrue(recipe.contains(Keys.HINT_FAVOURITE_HOLD));
     }
 
     @Test void theRecipeLineReadsPickBrowseFavMenuHideExit() {
-        assertEquals(Arrays.asList("pick", "browse", "fav (hold)", "menu (hold)", "hide", "exit"), Arrays.asList(Keys.hints(Keys.H_RECIPE, FN).labels));
-        assertEquals(Arrays.asList("pick", "fav (hold)", "menu (hold)", "hide", "exit"), Arrays.asList(Keys.hints(Keys.H_RECIPE, NONE).labels),
+        assertEquals(Arrays.asList(Keys.HINT_PICK, Keys.HINT_BROWSE, Keys.HINT_FAVOURITE_HOLD, Keys.HINT_MENU_HOLD, Keys.HINT_HIDE, Keys.HINT_EXIT), actionsOf(Keys.hints(Keys.H_RECIPE, FN)));
+        assertEquals(Arrays.asList(Keys.HINT_PICK, Keys.HINT_FAVOURITE_HOLD, Keys.HINT_MENU_HOLD, Keys.HINT_HIDE, Keys.HINT_EXIT), actionsOf(Keys.hints(Keys.H_RECIPE, NONE)),
                 "without Fn, browse is in the app menu, and the rest keep their order");
-        assertEquals(Arrays.asList("edit", "browse", "menu (hold)", "hide", "exit"), Arrays.asList(Keys.hints(Keys.H_CHIPS, FN).labels));
+        assertEquals(Arrays.asList(Keys.HINT_EDIT, Keys.HINT_BROWSE, Keys.HINT_MENU_HOLD, Keys.HINT_HIDE, Keys.HINT_EXIT), actionsOf(Keys.hints(Keys.H_CHIPS, FN)));
     }
 
     @Test void fnJoinsTheLegendWhenTheBodyHasIt() {
         for (int mode : new int[] { Keys.H_RECIPE, Keys.H_CHIPS }) {
             Keys.Hints h = Keys.hints(mode, FN);
-            assertEquals(Keys.I_FN, h.icons[Arrays.asList(h.labels).indexOf("browse")]);
-            assertFalse(Arrays.asList(Keys.hints(mode, NONE).labels).contains("browse"), "browse is in the app menu without Fn");
+            assertEquals(Keys.I_FN, h.icons[actionsOf(h).indexOf(Keys.HINT_BROWSE)]);
+            assertFalse(actionsOf(Keys.hints(mode, NONE)).contains(Keys.HINT_BROWSE), "browse is in the app menu without Fn");
         }
     }
 
     @Test void menuLegendsSayWhereMenuGoesAndWhenLeftRightChangeAValue() {
-        List<String> top = Arrays.asList(Keys.hints(Keys.H_MENU_TOP, NONE).labels), sub = Arrays.asList(Keys.hints(Keys.H_MENU_SUB, NONE).labels);
-        assertTrue(top.contains("close"), "MENU closes the app menu");
-        assertTrue(sub.contains("back"), "MENU goes back from the developer menu to the app menu");
-        assertFalse(sub.contains("close"));
-        assertFalse(top.contains("change"), "no value on the row, nothing for left / right to change");
+        List<Integer> top = actionsOf(Keys.hints(Keys.H_MENU_TOP, NONE)), sub = actionsOf(Keys.hints(Keys.H_MENU_SUB, NONE));
+        assertTrue(top.contains(Keys.HINT_CLOSE), "MENU closes the app menu");
+        assertTrue(sub.contains(Keys.HINT_BACK), "MENU goes back from the developer menu to the app menu");
+        assertFalse(sub.contains(Keys.HINT_CLOSE));
+        assertFalse(top.contains(Keys.HINT_CHANGE), "no value on the row, nothing for left / right to change");
         for (int mode : new int[] { Keys.H_MENU_TOP_VALUE, Keys.H_MENU_SUB_VALUE }) {
             Keys.Hints h = Keys.hints(mode, NONE);
-            int change = Arrays.asList(h.labels).indexOf("change");
+            int change = actionsOf(h).indexOf(Keys.HINT_CHANGE);
             assertEquals(Keys.I_LEFTRIGHT, h.icons[change], "mode " + mode);
         }
-        assertTrue(Arrays.asList(Keys.hints(Keys.H_MENU_TOP_VALUE, NONE).labels).contains("close"));
-        assertTrue(Arrays.asList(Keys.hints(Keys.H_MENU_SUB_VALUE, NONE).labels).contains("back"));
-        assertEquals(Arrays.asList("back"), Arrays.asList(Keys.hints(Keys.H_PAGE, NONE).labels));
-        assertEquals(Arrays.asList("exit (hold)"), Arrays.asList(Keys.hints(Keys.H_LOGGER, NONE).labels), "a short MENU is logged, not obeyed");
+        assertTrue(actionsOf(Keys.hints(Keys.H_MENU_TOP_VALUE, NONE)).contains(Keys.HINT_CLOSE));
+        assertTrue(actionsOf(Keys.hints(Keys.H_MENU_SUB_VALUE, NONE)).contains(Keys.HINT_BACK));
+        assertEquals(Arrays.asList(Keys.HINT_BACK), actionsOf(Keys.hints(Keys.H_PAGE, NONE)));
+        assertEquals(Arrays.asList(Keys.HINT_EXIT_HOLD), actionsOf(Keys.hints(Keys.H_LOGGER, NONE)), "a short MENU is logged, not obeyed");
     }
 
     @Test void theBrowserClosesOnMenuWithFnBesideItWhenPresent() {
         for (int mode : new int[] { Keys.H_BRANDS, Keys.H_RECIPES }) {
             Keys.Hints bare = Keys.hints(mode, NONE), full = Keys.hints(mode, FN);
-            int close = Arrays.asList(bare.labels).indexOf("close");
+            int close = actionsOf(bare).indexOf(Keys.HINT_CLOSE);
             assertEquals(Keys.I_MENU, bare.icons[close]);
             assertEquals(Keys.I_NONE, bare.alts[close]);
             assertEquals(Keys.I_FN, full.alts[close]);
@@ -184,8 +185,4 @@ class KeysTest {
         assertEquals("", Keys.name(9999), "an unknown code has no name; the logger shows its number");
     }
 
-    @Test void theNoticeUsesOnlyCharactersTheCameraFontHas() {
-        // the firmware font has no arrows or symbols (Legend); the notice is plain text in a toast
-        for (char ch : Keys.NOTICE.toCharArray()) assertTrue(ch < 0x2190, "U+" + Integer.toHexString(ch) + " in the notice");
-    }
 }

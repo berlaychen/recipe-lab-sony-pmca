@@ -68,11 +68,6 @@ class FavouritesTest {
         }
     }
 
-    @Test void toggleMessage() {
-        assertEquals("Velvia added to Favourites", Favourites.toggleMessage("Velvia", true));
-        assertEquals("Velvia removed from Favourites", Favourites.toggleMessage("Velvia", false));
-    }
-
     @Test void favouritesSitFirstInTheBrandColumnAndTheColumnWraps() {
         int last = Recipes.GROUPS.length - 1;
         assertEquals(0, Favourites.nextGroup(Favourites.GROUP, +1), "down from Favourites is the first brand");
@@ -81,8 +76,6 @@ class FavouritesTest {
         assertEquals(last, Favourites.nextGroup(Favourites.GROUP, -1));
         assertEquals(0, Favourites.groupRow(Favourites.GROUP));
         assertEquals(1, Favourites.groupRow(0));
-        assertEquals("Favourites", Favourites.groupName(Favourites.GROUP));
-        assertEquals(Recipes.GROUPS[3], Favourites.groupName(3));
     }
 
     @Test void landingOnAGroupHighlightsItsFirstRecipe() {

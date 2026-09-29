@@ -135,11 +135,15 @@ would be painful, since the merge only ever squashes down to one commit anyway.
 ## Testing
 
 `./tools/test.sh` runs the unit tests — the `test` CI job, and the first step of every `main` build
-and of a release — against a bare JDK 17 in a few seconds. They cover
-what the app decides without the camera: the recipe table, how each value is encoded in the settings store, the
-bytes ENTER writes, the live-preview parameters, chip navigation and the overlay text
-([details](DEVELOPMENT.md#unit-tests)). Logic of that kind goes into `Params.java`, `Recipes.java`, `Favourites.java`, `DevTools.java`, `Keys.java` or `KeyProbe.java` with a
-test next to it; `MainActivity` and the views cannot be tested off the camera.
+and of a release — against a bare JDK 17 in a few seconds. They cover what the app decides without the camera:
+the recipe table, settings-store encoding, the bytes ENTER writes, live-preview parameters, chip/navigation
+behavior and canonical diagnostic formats. The same command also runs the locale-catalog and Unicode text-flow
+checks ([details](DEVELOPMENT.md#unit-tests)).
+
+Logic that does not need Android resources goes into `Params.java`, `Recipes.java`, `Favourites.java`,
+`DevTools.java`, `Keys.java`, `KeyProbe.java` or another host-testable class. Localized display formatting
+lives in `UiText.java` and the views: the APK build proves those resource references compile, while final font,
+wrapping and Canvas layout remain part of the on-camera check.
 
 ### On the camera
 

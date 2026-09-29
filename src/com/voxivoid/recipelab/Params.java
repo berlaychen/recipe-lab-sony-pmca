@@ -190,6 +190,50 @@ final class Params {
         return new ArrayList<Integer>(ids);
     }
 
+    /** the logical row a settings-store slot belongs to, or -1 when no row owns it */
+    static int rowForSlot(int id) {
+        switch (id) {
+            case ID_EV:
+            case ID_EV2:
+                return R_EV;
+            case ID_QFMT:
+            case ID_QJPG:
+            case ID_QFMT2:
+            case ID_QJPG2:
+                return R_QUAL;
+            case ID_WB_AB:
+            case ID_WB_AB_AWB:
+            case ID_WB_AB_K:
+                return R_AB;
+            case ID_WB_GM:
+            case ID_WB_GM_AWB:
+            case ID_WB_GM_K:
+                return R_GM;
+            case ID_DRO:
+            case ID_DRO_LVL:
+                return R_DRO;
+            default:
+                break;
+        }
+        for (int row = 1; row < N; row++) {
+            if (ROW_ID[row] > 0 && ROW_ID[row] == id) {
+                return row;
+            }
+        }
+        return subEffectForSlot(id) >= 0 ? R_SUB : -1;
+    }
+
+    /** the Picture Effect whose sub-setting owns {@code id}, or -1 when it is not a sub-setting slot */
+    static int subEffectForSlot(int id) {
+        for (int effect = 0; effect < Recipes.PE_KEYS.length; effect++) {
+            int subId = Recipes.subId(effect);
+            if (subId != 0 && subId == id) {
+                return effect;
+            }
+        }
+        return -1;
+    }
+
     /** the row a slot belongs to, as a message names it; the hex id for a slot no row owns */
     static String slotName(int id) {
         switch (id) {
@@ -200,7 +244,7 @@ final class Params {
             case ID_DRO: case ID_DRO_LVL: return ROW_NAME[R_DRO];
         }
         for (int i = 1; i < N; i++) if (ROW_ID[i] > 0 && ROW_ID[i] == id) return ROW_NAME[i];
-        for (int pe = 0; pe < Recipes.PE_KEYS.length; pe++) { int sid = Recipes.subId(pe); if (sid != 0 && sid == id) return ROW_NAME[R_SUB] + " " + Recipes.PE_LABEL[pe]; }   // an effect with no sub-slot answers 0, which is no slot at all
+        for (int pe = 0; pe < Recipes.PE_KEYS.length; pe++) { int sid = Recipes.subId(pe); if (sid != 0 && sid == id) return ROW_NAME[R_SUB] + " " + Recipes.peLabel(pe); }   // an effect with no sub-slot answers 0, which is no slot at all
         return String.format("%08x", id);
     }
 
@@ -222,22 +266,6 @@ final class Params {
         List<Integer> locked = new ArrayList<Integer>();
         for (int i = 0; i < ws.size(); i++) if (attrs[i] >= 0 && slotLocked(attrs[i])) locked.add(ws.get(i).id);
         return locked;
-    }
-
-    /**
-     * The recipe was not written because the camera holds some of its slots read-only: which settings they are,
-     * and the one thing that changes it. Checked before the first write, so a locked slot cannot leave half a
-     * recipe in the store.
-     */
-    static String lockedMessage(List<Integer> ids) {
-        return "Not written — the camera holds " + (ids.size() == 1 ? "this setting" : "these settings") + " read-only: " + slotNames(ids)
-                + ". Unlock the settings store with OpenMemories-Tweak (Protection → Unlock protected settings), then pick the recipe again.";
-    }
-
-    /** the camera refused a write: which setting stopped it, and how much of the recipe went in before it did */
-    static String writeFailedMessage(int id, String error, int written) {
-        return "WRITE FAILED on " + slotName(id) + " (" + String.format("%08x", id) + "): " + error
-                + (written == 0 ? " — nothing was written" : " — " + written + " byte" + (written == 1 ? "" : "s") + " written before it stopped");
     }
 
     /**
@@ -400,36 +428,6 @@ final class Params {
             case R_QUAL: return v >= 0 && v < Q_LABEL.length ? Q_LABEL[v] : "?" + v;
             default: return (v > 0 ? "+" : "") + v;
         }
-    }
-
-    /** the line under the recipe name; {@code previewErr} is null while the live preview works */
-    static String metaLine(int[] cur, int[] edit, String previewErr) {
-        StringBuilder m = new StringBuilder();
-        if (edit[R_PE] != 0) {
-            m.append("Picture Effect ").append(Recipes.PE_LABEL[edit[R_PE]]);
-            String sl = Recipes.subLabel(edit[R_PE], edit[R_SUB]); if (sl != null) m.append(' ').append(sl);
-            m.append(" (Creative Style ignored, JPEG only)");
-        } else m.append(Recipes.styleLabel(edit[R_STYLE]));
-        m.append("  ·  WB ").append(edit[R_WBMODE] == WB_KELVIN ? (edit[R_KELVIN] * 100) + "K" : edit[R_WBMODE] == WB_AUTO ? "auto" : "mode " + edit[R_WBMODE]);
-        if (edit[R_EV] != 0) m.append("  ·  EV ").append(Recipes.evLabel(edit[R_EV]));
-        if (edit[R_DRO] != Recipes.DRO_AUTO) m.append("  ·  DRO ").append(Recipes.droLabel(edit[R_DRO]));
-        if (edit[R_QUAL] != cur[R_QUAL]) m.append("  ·  QUALITY → ").append(Q_LABEL[edit[R_QUAL]]).append(" (now ").append(Q_LABEL[cur[R_QUAL]]).append(")");
-        if (edit[R_PE] != 0 && edit[R_QUAL] <= Q_RAWJPG) m.append("  ·  RAW is on: effect ignored");
-        if (previewErr != null) m.append("  ·  no live preview: ").append(previewErr);
-        return m.toString();
-    }
-
-    /** the one-line pill of the minimal overlay */
-    static String miniLine(int recipe, int[] cur, int[] edit, boolean dirty) {
-        return (edit[R_PE] != 0 ? "PE  " : "CS  ") + Recipes.ALL[recipe].name + "   " + (recipe + 1) + " / " + Recipes.ALL.length
-                + (dirty ? "   · preview" : "   · active") + (edit[R_QUAL] != cur[R_QUAL] ? "   · quality → " + Q_LABEL[edit[R_QUAL]] : "");
-    }
-
-    /** title and explanation of the quality-change prompt */
-    static String[] qualityPrompt(int[] cur, int[] edit) {
-        return new String[] {
-            "Quality: " + Q_LABEL[cur[R_QUAL]] + "  →  " + Q_LABEL[edit[R_QUAL]],
-            edit[R_PE] != 0 ? "JPEG is needed to apply this recipe." : "Creative Style recipes use the Factory recipe's quality." };
     }
 
     // ------------------------------------------------------------ snapshot / diff tool

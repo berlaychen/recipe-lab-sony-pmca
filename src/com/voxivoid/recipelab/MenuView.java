@@ -24,6 +24,7 @@ public class MenuView extends View {
     private final RectF r = new RectF();
     private final Path tri = new Path();
     private final Legend legend;
+    private final UiText ui;
     private final float d;
     private String title = "";
     private String[] labels = new String[0], details = new String[0], values = new String[0];
@@ -33,8 +34,9 @@ public class MenuView extends View {
 
     public MenuView(Context c, AttributeSet a) {
         super(c, a);
+        ui = new UiText(c);
         d = c.getResources().getDisplayMetrics().density;
-        legend = new Legend(d);
+        legend = new Legend(d, ui);
         bg.setColor(0xF0101010);
         head.setColor(ACCENT); head.setTextSize(9 * d); head.setFakeBoldText(true);
         item.setTextSize(13 * d); item.setFakeBoldText(true);
@@ -75,7 +77,7 @@ public class MenuView extends View {
     protected void onDraw(Canvas c) {
         float w = getWidth(), h = getHeight(), pad = 16 * d;
         c.drawRect(0, 0, w, h, bg);
-        c.drawText(title, pad, pad + 7 * d, head);
+        c.drawText(UiCanvas.fit(title, head, w - 2 * pad), pad, pad + 7 * d, head);
         float top = pad + 14 * d, bottom = h - pad - 20 * d;       // header / footer reserved, as in the brand list
         c.drawLine(pad, top, w - pad, top, rule);
 
@@ -87,16 +89,17 @@ public class MenuView extends View {
             small.setColor(0xDDFFFFFF);
             for (int i = first; i < Math.min(n, first + visible); i++, y += rh) {
                 c.drawText(labels[i], pad, y + 13 * d, key);
-                c.drawText(details[i], pad + kc, y + 13 * d, small);
+                c.drawText(UiCanvas.fit(details[i], small, w - 2 * pad - kc), pad + kc, y + 13 * d, small);
             }
         } else {
             for (int i = first; i < Math.min(n, first + visible); i++, y += rh) {
                 boolean on = i == selected;
                 if (on) { r.set(pad - 6 * d, y, w - pad + 6 * d, y + rh - 3 * d); row.setColor(ACCENT); c.drawRoundRect(r, 4 * d, 4 * d, row); }
                 item.setColor(on ? INK : 0xFFFFFFFF);
-                c.drawText(labels[i], pad, y + 16 * d, item);
+                float reserved = values[i] == null ? 0 : valueWidth(values[i]) + 12 * d;
+                c.drawText(UiCanvas.fit(labels[i], item, w - 2 * pad - reserved), pad, y + 16 * d, item);
                 small.setColor(on ? 0xCC1A1208 : 0x99FFFFFF);
-                c.drawText(details[i], pad, y + 29 * d, small);
+                c.drawText(UiCanvas.fit(details[i], small, w - 2 * pad - reserved), pad, y + 29 * d, small);
                 if (values[i] != null) drawValue(c, values[i], w - pad, y + rh / 2 - 1.5f * d, on);
             }
         }
@@ -104,9 +107,17 @@ public class MenuView extends View {
         legend.draw(c, pad, h - pad - 6 * d, w - 2 * pad, hints);
     }
 
-    /** "◀ Full ▶" ending at {@code right}, centred on {@code cy}: the arrows say left / right change it */
+    /** text width reserved for a panel-state value; keeps the arrows stationary while it changes */
+    private float valueTextWidth(String text) {
+        return Math.max(value.measureText(text), value.measureText(ui.text(R.string.panel_hidden)));
+    }
+
+    private float valueWidth(String text) {
+        return valueTextWidth(text) + 36 * d;
+    }
+
     private void drawValue(Canvas c, String text, float right, float cy, boolean on) {
-        float a = 4.5f * d, gap = 7 * d, tw = Math.max(value.measureText(text), value.measureText("Hidden"));   // a steady width as it changes
+        float a = 4.5f * d, gap = 7 * d, tw = valueTextWidth(text);   // a steady width as it changes
         float rx = right - 4 * d, lx = rx - a - gap - tw - gap - a;
         int col = on ? INK : 0xCCFFFFFF;
         arrow.setColor(on ? INK : 0x88FFFFFF); value.setColor(col);

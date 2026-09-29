@@ -11,8 +11,6 @@ package com.voxivoid.recipelab;
 final class DevTools {
     private DevTools() {}
 
-    static final String APP_TITLE = "RECIPE LAB", TITLE = "DEV TOOLS", ABOUT_TITLE = "ABOUT";
-
     /** the two menu levels: the app menu a MENU hold opens, and the developer menu under it */
     static final int LEVEL_APP = 0, LEVEL_DEV = 1;
 
@@ -35,6 +33,7 @@ final class DevTools {
 
     /** the frame list the run writes into the app's files dir; the frames themselves are named by the camera */
     static final String MANIFEST = "samples.txt";
+    static final String SOURCE_URL = "github.com/voxivoid/recipe-lab-sony-pmca";
     /** field separator of a manifest line; no recipe name contains it (RecipesTest) */
     static final String SEP = "|";
 
@@ -45,68 +44,14 @@ final class DevTools {
     /** the row above / below on a level, wrapping */
     static int nextRow(int level, int row, int dir) { int n = rows(level); return (row + n + dir) % n; }
 
-    /** an app menu row's title */
-    static String appLabel(int row) {
-        switch (row) {
-            case APP_BROWSE: return "Browse recipes";
-            case APP_PANEL: return "Panel visibility";
-            case APP_RESET: return "Reset settings";
-            case APP_ABOUT: return "About";
-            case APP_DEV: return "Developer  >";
-            default: return "?" + row;
-        }
-    }
-
-    /** the line under an app menu row's title */
-    static String appDetail(int row) {
-        switch (row) {
-            case APP_BROWSE: return "Brands and favourites";
-            case APP_PANEL: return "What stays over the live image — left / right to change";
-            case APP_RESET: return "Back to the camera's factory look";
-            case APP_ABOUT: return "Version, camera, platform";
-            case APP_DEV: return "Settings snapshot, read-only check, samples, key logger";
-            default: return "";
-        }
-    }
-
-    /**
-     * The value an app menu row shows at its right edge, which left / right change in place; null for a row that has
-     * none. Panel visibility shows the panel state: Full, Label (the pill) or Hidden.
-     */
-    static String appValue(int row, int overlay) { return row == APP_PANEL ? panelLabel(overlay) : null; }
-
-    /** a panel state as the menu names it */
-    static String panelLabel(int overlay) {
-        switch (overlay) {
-            case Params.OV_FULL: return "Full";
-            case Params.OV_PILL: return "Label";
-            case Params.OV_HIDDEN: return "Hidden";
-            default: return "?";
-        }
-    }
-
     /** the panel state left / right lands on: full → label → hidden, wrapping; the browser is never one of them */
     static int nextPanel(int overlay, int dir) {
         int o = overlay >= Params.OV_FULL && overlay <= Params.OV_HIDDEN ? overlay : Params.OV_FULL;
         return (o + 3 + dir) % 3;
     }
 
-    /** the About page: {name, value}. The version comes from the installed package at runtime, never from here. */
-    static String[][] about(String version, String model, String platform) {
-        return new String[][] {
-            { "version", orUnknown(version) },
-            { "camera", orUnknown(model) },
-            { "platform", orUnknown(platform) },
-            { "source", "github.com/voxivoid/recipe-lab-sony-pmca" },
-        };
-    }
-
     // ------------------------------------------------------------ the reset question (hold trash, or Reset settings)
-    /** the question asked before the factory look is stored: it replaces whatever the camera has now */
-    static final String RESET_TITLE = "Reset to factory settings?",
-            RESET_BODY = "Stores Standard 0 / 0 / 0, auto white balance, no effect, in place of the current look";
-    /** the answers; Cancel is the one highlighted when the question opens, so a stray centre press changes nothing */
-    static final String[] RESET_OPTIONS = { "Reset", "Cancel" };
+    /** Cancel is highlighted when the reset question opens, so a stray centre press changes nothing. */
     static final int RESET_DEFAULT = 1;
 
     /**
@@ -152,30 +97,6 @@ final class DevTools {
     /** the row above / below, wrapping */
     static int nextRow(int row, int dir) { return nextRow(LEVEL_DEV, row, dir); }
 
-    /** a row's title; the snapshot row and the delay row say what they will do next */
-    static String rowLabel(int row, boolean snapshotTaken, int settle) {
-        switch (row) {
-            case ROW_SNAPSHOT: return snapshotTaken ? "Settings diff" : "Settings snapshot";
-            case ROW_LOCKS: return "Read-only check — " + Params.allSlots().size() + " slots";
-            case ROW_SAMPLES: return "Shoot samples — " + Recipes.ALL.length + " recipes";
-            case ROW_SETTLE: return "Settle delay";
-            case ROW_KEYS: return "Key logger";
-            default: return "?" + row;
-        }
-    }
-
-    /** the line under a row's title */
-    static String rowDetail(int row, boolean snapshotTaken) {
-        switch (row) {
-            case ROW_SNAPSHOT: return snapshotTaken ? "Compare every settings id against the snapshot" : "Store the value of every settings id";
-            case ROW_LOCKS: return "Test every slot a recipe writes for the read-only flag";
-            case ROW_SAMPLES: return "One JPEG per recipe, in table order — MENU stops the run";
-            case ROW_SETTLE: return "Wait after applying a recipe before the shutter fires — left / right to change";
-            case ROW_KEYS: return "Show every key's scan code — hold MENU to leave";
-            default: return "";
-        }
-    }
-
     /** the value a developer menu row shows at its right edge, which left / right change in place; null for none */
     static String rowValue(int row, int settle) { return row == ROW_SETTLE ? settleLabel(settle) : null; }
 
@@ -193,30 +114,6 @@ final class DevTools {
     }
 
     // ------------------------------------------------------------ the sample run
-    /** the run needs the live camera: without it nothing is applied and nothing can be shot */
-    static final String NO_PREVIEW = "No live preview — the sample run needs the camera";
-
-    /** the sticky line while the run walks the table; frames count from 1 */
-    static String progress(int frame, int total, String recipeName) {
-        return "Shooting " + frame + " / " + total + "  ·  " + recipeName + "   —   MENU stops";
-    }
-
-    /** the run reached the end of the table */
-    static String doneMessage(int shot, int total) {
-        return "Samples done — " + shot + " of " + total + " frames shot, listed in " + MANIFEST;
-    }
-
-    /** MENU during the run */
-    static String stoppedMessage(int shot, int total) {
-        return shot == 0 ? "Sample run stopped before the first frame"
-                : "Sample run stopped — " + shot + " of " + total + " frames shot, listed in " + MANIFEST;
-    }
-
-    /** the camera refused a capture: the run cannot go on, and the frames so far are still listed */
-    static String shootFailed(int frame, int shot, String error) {
-        return "Shutter failed on frame " + frame + ": " + error + "  —  " + shot + " frames shot, listed in " + MANIFEST;
-    }
-
     // ------------------------------------------------------------ the manifest
     /**
      * The first line of a run: what the columns are, and the delay it was shot with. Appended to, so a file can

@@ -29,39 +29,39 @@ see [CONTRIBUTING.md](CONTRIBUTING.md).
 AndroidManifest.xml            package com.voxivoid.recipelab
 src/com/voxivoid/recipelab/
   MainActivity.java            UI state, key handling, the camera (CameraEx via reflection), store + sync
-  Params.java                  the parameter rows: slot ids, store encodings, preview parameters, chip
-                               navigation, HUD strings — pure functions, no Android, covered by test/
-  Recipes.java                 the 77-entry table (76 recipes + the factory look, FACTORY, which only Reset settings
-                               reaches), brands, GROUP_START / GROUP_COUNT, list navigation that skips FACTORY
-  Favourites.java              the favourites list: stored by name in the app's preferences, and how the browser
-                               walks the Favourites group — pure functions, no Android, covered by test/
-  DevTools.java                the app menu and developer menu rows, the About and key-logger lines, and the sample
-                               run's delays, messages and manifest — pure functions, no Android, covered by test/
-  Keys.java                    scan codes, the press / hold gesture, the trash-hold guard, and the legend for the
-                               keys a body has — pure functions, no Android, covered by test/
-  KeyProbe.java                asks the camera which keys it has and which model it is (Sony classes by reflection);
-                               every answer is null off the camera — no Android, covered by test/
-  res/raw/ids.txt              every settings entry of 16 bytes or less, used by the snapshot/diff tool
-  PickerView.java              Canvas-drawn brand browser (Favourites first, then the brands)
-  MenuView.java                Canvas-drawn full-screen list: the app menu, the developer menu (rows, some with a
-                               value left / right change in place, between drawn arrows), and read-only pages
-                               (About, the key logger)
-  Legend.java                  Canvas-drawn key icons and the favourite star, fit-to-width (camera font has no symbol glyphs).
-                               Draws what Keys.hints builds: the four-way and the wheel are left out as self-evident,
-                               a hold is its key's icon labelled "(hold)", and Fn, where the body has it, sits before
-                               MENU when both close the list ("Fn / MENU close")
-  StarView.java                the star next to the recipe name when it is a favourite
-  HintBar.java                 legend view under the panel (uses Legend)
+  Params.java                  parameter rows, slot ids, store encodings, preview parameters, chip navigation and
+                               canonical diagnostic/value formatting — pure, no Android, covered by test/
+  Recipes.java                 the 77-entry table (76 recipes + the factory look), brands, list navigation and
+                               canonical recipe identity — pure, no Android, covered by test/
+  Favourites.java              favourites storage/navigation; persisted by canonical recipe name — pure, no Android
+  DevTools.java                app/developer-menu mechanics, settle delays, key-log and sample-manifest diagnostics
+                               — pure, no Android, covered by test/
+  Keys.java                    scan codes, press/hold gestures and semantic legend actions — pure, no Android
+  KeyProbe.java                asks the camera which keys it has and which model it is (Sony classes by reflection)
+  TextFlow.java                Unicode-safe measured wrapping/ellipsizing — pure, no Android, host-tested
+  UiText.java                  Android resource-backed display names and localized UI formatting
+  UiCanvas.java                Paint.measureText adapter for TextFlow
+  PickerView.java              Canvas-drawn brand/recipe browser
+  MenuView.java                Canvas-drawn app/developer menus and read-only pages
+  PromptView.java              Canvas-drawn localized modal questions
+  Legend.java                  Canvas-drawn key icons plus localized semantic hint labels
+  StarView.java                favourite star
+  HintBar.java                 legend view under the main panel
   NativeBackup.java            JNI: read / write / attr / sync
 jni/jni.cpp                    Backup_read / Backup_write / Backup_sync_all via OpenMemories-Platform
 jni/platform/                  git submodule: ma1co/OpenMemories-Platform
-res/                           layout, shape drawables, launcher icon
-test/com/voxivoid/recipelab/   JUnit tests for the camera-free classes (see Unit tests)
+res/values/                    complete English default UI catalog
+res/values-*/                  optional locale overrides
+res/raw/ids.txt                settings ids used by the snapshot/diff tool
+test/com/voxivoid/recipelab/   JUnit tests for camera-free classes
 test/com/sony/scalar/sysutil/  test doubles of the Sony classes KeyProbe reflects on
-build.sh                       the build: ndk-build, aapt, javac, d8, zipalign, apksigner
-build.cmd                      the same seven steps on Windows
-tools/                         version computation, bumping, the unit tests, and the CI gates
+tools/i18n-tests/              host checks for locale catalogs and Unicode text flow
+build.sh                       ndk-build, aapt, javac, d8, zipalign, apksigner
 ```
+
+The localization boundary is deliberate: camera/store decisions stay in the host-testable core, while text that
+depends on Android resources lives in `UiText` and the views. Canonical diagnostic files and favourites do not
+change with the camera language.
 
 ## Settings slots
 
@@ -376,42 +376,37 @@ export JAVA_HOME=$HOME/toolchains/jdk17
 ./tools/test.sh Writes       # only test classes whose name contains "Writes"
 ```
 
-That is the whole of the `test` CI job on work branches; `dev-build` runs the same script before every
-development build and `create-release` before anything is pushed to `main`. It needs a JDK 17 and nothing else: `Recipes.java`, `Params.java` and `Favourites.java`
-are compiled against the bare JDK — no `android.jar`, no NDK — then the tests under `test/` are compiled and run
-with the JUnit 5 console launcher, one jar fetched from Maven Central into `out/test/` on first use and checked
-against a SHA-256 pinned in the script (`JUNIT_JAR=<path>` points it at a copy when offline). Reports land in
-`out/test/reports/`.
+`tools/test.sh` first runs the locale/TextFlow checks, then compiles the camera-free classes against a bare
+JDK 17 — no `android.jar`, no NDK — and runs the JUnit 5 tests. The Android-dependent `UiText` and Canvas views
+are compiled by the normal APK build instead.
 
-**What is covered.** Everything that decides without the camera lives in `Params`, `Recipes` and `Favourites`, and the
-tests pin it down:
+**What is covered.**
 
 | | |
 |---|---|
-| `RecipesTest` | the table itself — 77 entries (76 listed + the factory look, which navigation skips), group order, every value inside its row's range, kelvin in whole hundreds, sub-parameters that exist for the effect; labels, `summary()`, wrap-around navigation |
-| `ParamsCodecTest` | how the store encodes each row (DRO bytes, any Picture Profile reading as on, magenta-positive G-M, the quality pair, signed vs unsigned slots) and how it reads back |
-| `ParamsWritesTest` | which bytes ENTER writes for a recipe — golden lists for a few, and every recipe stored over a factory camera, then on top of each other, read back through the same decoder |
-| `ParamsPreviewTest` | the `Camera.Parameters` the live preview sets, recipe by recipe |
-| `ParamsChipsTest` | chip visibility, stepping (wrap vs clamp, the effect → SUB / quality side effects), LEFT/RIGHT and UP/DOWN landing spots, chip text |
-| `ParamsHudTest` | the meta line, the minimal pill, the quality prompt |
-| `ParamsToolsTest` | the snapshot tool's id list — including that `res/raw/ids.txt` is well formed and lists every slot the app writes — and its diff lines |
-| `DevToolsTest` | the app menu and developer menu rows, About and the key logger's lines, settle delays, the sample run's progress / finish lines, and its manifest — a parsable line per recipe, in run order |
-| `KeysTest` | the press / hold gesture, the trash-hold guard, and that the legend never names a key the body lacks — every function on a universal key, Fn only when reported, the order pick · browse · fav · menu · hide · exit, the reset hold never hinted |
-| `KeyProbeTest` | that the key probe answers "unknown" off the camera instead of throwing |
-| `KeyProbeCameraTest` | the key probe against test doubles of Sony's `ScalarInput`, `KeyStatus` and `ScalarProperties` (`test/com/sony/scalar/sysutil/`, shaped like the OpenMemories-Framework stubs): the reflection finds the real signatures, only `valid == 1` is a key, only `status == 1` is a press. The doubles throw for anything a test did not set up, which is how the "off the camera" answers stay null |
-| `FavouritesTest` | the favourites list — stored by name, unknown names dropped, marking order kept, toggle, the highlight after a removal — and the browser's group order with Favourites first |
+| `RecipesTest` | recipe table, group order, ranges, canonical labels/summary and navigation |
+| `ParamsCodecTest` | settings-store encodings and decoding |
+| `ParamsWritesTest` | exact bytes ENTER writes, including every recipe |
+| `ParamsPreviewTest` | live-preview `Camera.Parameters` for every recipe |
+| `ParamsChipsTest` | chip visibility, stepping and navigation; canonical value formatting |
+| `ParamsLockTest` | read-only-slot decisions plus slot→logical-row identity used by localized diagnostics |
+| `ParamsToolsTest` | snapshot/diff ids and lines |
+| `DevToolsTest` | pure menu navigation, settle delay, key-log and sample-manifest diagnostic formats |
+| `KeysTest` | press/hold behavior and semantic legend actions for bodies with/without Fn |
+| `KeyProbeTest` / `KeyProbeCameraTest` | Sony reflection signatures and off-camera fallbacks |
+| `FavouritesTest` | name-based persistence and browser navigation |
+| `tools/i18n-tests/TextFlowChecks.java` | CJK/Unicode wrapping and ellipsizing, including surrogate pairs and randomized cases |
+| `tools/check-i18n.py` | resource types, plural structure and positional-format compatibility |
 
-**What is not, and cannot be.** `MainActivity` (key dispatch, overlays, the camera and the JNI store), the
-Canvas views (`PickerView`, `PromptView`, `MenuView`, `HintBar`, `Legend`) and `jni/jni.cpp` need a running camera or an
-Android runtime; there is no Gradle and no Robolectric here, and a mock of `CameraEx` would prove nothing. Those
-stay on the [on-camera checklist](CONTRIBUTING.md#on-the-camera). Likewise the slot ids themselves: a
-test can show that the app writes `0x01070175 = 6`, not that the camera means B&W by it.
+**What is not host-tested.** Final localized sentence composition in `UiText`, Android resource selection,
+Sony's firmware font and the Canvas layout require an Android/camera runtime. `build.sh` is the compile-time gate
+for the resource IDs and Java integration; the [on-camera checklist](CONTRIBUTING.md#on-the-camera) is still required
+before merge. A green CI build is not evidence that a translated line fits the A6000/A6500 display.
 
-**Keeping it that way.** New logic that does not need the camera goes into `Params` (or `Recipes`, `Favourites`,
-`DevTools`, `Keys`, `KeyProbe`, or a new class listed in `UNITS` in `tools/test.sh`) with a test next to it, and is called from `MainActivity`, never the
-other way round. `tools/test.sh` compiles those classes without `android.jar` on purpose: an `android.*` import in either fails there before it fails in CI. Tests
-are plain JUnit 5 (`org.junit.jupiter.api`), one behaviour per method, no mocking library; `Fixtures` has a
-factory-fresh camera as rows and as store bytes and a fake store to write into.
+**Keeping the boundary.** New camera/store/navigation logic that does not require Android belongs in
+`Params`, `Recipes`, `Favourites`, `DevTools`, `Keys`, `KeyProbe` or another class listed in `UNITS`
+with a host test. Resource-dependent display formatting belongs in `UiText` or a view. Do not move CameraEx,
+settings-store or persistence decisions into the localization layer.
 
 ### Installing on the camera
 
@@ -462,8 +457,14 @@ A build never mutates the checked-in manifest; it writes `out/AndroidManifest.xm
 
 ## Adding recipes
 
-Adding a recipe is one line in `Recipes.java` inside its brand block. Adding a brand is a new entry in `GROUPS` plus
-a block of recipes.
+The camera recipe itself is still one line in `Recipes.java` inside its brand block. Because display names are now
+localizable, also add the English `recipe_*` string and the matching `DisplayNameSpec` entry in
+`UiText.RECIPE_NAMES` at the same position. `UiText` verifies the canonical names/order when the class loads, so
+an omitted or misplaced mapping fails instead of silently showing another recipe's translation. Locale files only
+need an override when that language actually translates the name.
+
+Adding a brand likewise adds its canonical entry in `Recipes.GROUPS`, an English `group_*` resource and a
+`UiText.GROUP_NAMES` entry; locale files may override it independently from recipe names.
 
 **Saturation, contrast and sharpness stop at ±3.** The live preview takes more (saturation to ±16), which is why a
 look beyond the menu range looks right inside the app, but the camera does not keep it: after the app exits the menu

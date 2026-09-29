@@ -71,6 +71,16 @@ class ParamsLockTest {
     }
 
     // ---- naming a slot
+    @Test void slotIdentityUsesRowsAndEffectConstants() {
+        assertEquals(R_STYLE, rowForSlot(ID_STYLE));
+        assertEquals(R_EV, rowForSlot(ID_EV2));
+        assertEquals(R_QUAL, rowForSlot(ID_QJPG2));
+        assertEquals(R_SUB, rowForSlot(Recipes.subId(Recipes.PE_HIGHKEY)));
+        assertEquals(Recipes.PE_HIGHKEY, subEffectForSlot(Recipes.subId(Recipes.PE_HIGHKEY)));
+        assertEquals(-1, rowForSlot(0x00e70000));
+        assertEquals(-1, subEffectForSlot(ID_STYLE));
+    }
+
     @Test void aSlotIsNamedAfterTheRowThatOwnsIt() {
         assertEquals("STYLE", slotName(ID_STYLE));
         assertEquals("EV", slotName(ID_EV));
@@ -89,23 +99,7 @@ class ParamsLockTest {
     }
 
     // ---- what the user is told
-    @Test void theLockedMessageNamesTheSettingsAndTheWayOut() {
-        String one = lockedMessage(ids(ID_STYLE));
-        assertTrue(one.startsWith("Not written — the camera holds this setting read-only: STYLE."), one);
-        assertTrue(one.contains("OpenMemories-Tweak"), "the message carries the only fix there is");
 
-        String many = lockedMessage(ids(ID_EV, ID_EV2, ID_STYLE));
-        assertTrue(many.contains("these settings read-only: EV, STYLE"), many);
-        assertFalse(many.contains("EV, EV"), "a row whose copies are both locked is named once: " + many);
-    }
-
-    @Test void theWriteFailureNamesTheSlotAndHowFarItGot() {
-        assertEquals("WRITE FAILED on STYLE (01070175): Protection enabled — nothing was written",
-                writeFailedMessage(ID_STYLE, "Protection enabled", 0));
-        assertEquals("WRITE FAILED on G-M (0107067e): Backup_write failed — 1 byte written before it stopped",
-                writeFailedMessage(ID_WB_GM_AWB, "Backup_write failed", 1));
-        assertTrue(writeFailedMessage(ID_EV, "boom", 4).endsWith("4 bytes written before it stopped"));
-    }
 
     // ---- the developer menu's report
     @Test void aBodyWithNothingFlaggedReportsNothingReadOnly() {
